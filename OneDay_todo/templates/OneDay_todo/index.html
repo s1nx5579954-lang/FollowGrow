@@ -1,0 +1,66 @@
+<!-- oneday_todo/templates/oneday_todo/index.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>FlowGrow - OneDay Todo</title>
+</head>
+<body>
+    <h1>FlowGrow</h1>
+    <p>Share your small steps.</p>
+
+    <h2>新しいリストを作成</h2>
+    <form method="post" action="{% url 'list_create' %}">
+        {% csrf_token %}
+        {{ list_form.as_p }}
+        <button type="submit">リスト作成</button>
+    </form>
+
+    <hr>
+
+    {% for list in lists %}
+        <div class="oneday-list">
+            <h2>
+                {{ list.title }}
+                <form method="post" action="{% url 'list_delete' list.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('このリストとタスクを全て削除しますか？')">リスト削除</button>
+                </form>
+            </h2>
+
+            <ul>
+                {% for task in list.tasks.all %}
+                    <li>
+                        <form method="post" action="{% url 'task_toggle' task.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="checkbox"
+                                   onchange="this.form.submit()"
+                                   {% if task.is_completed %}checked{% endif %}>
+                        </form>
+
+                        <span style="{% if task.is_completed %}text-decoration: line-through;{% endif %}">
+                            {{ task.content }}
+                        </span>
+
+                        <form method="post" action="{% url 'task_delete' task.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">削除</button>
+                        </form>
+                    </li>
+                {% empty %}
+                    <li>タスクがありません</li>
+                {% endfor %}
+            </ul>
+
+            <form method="post" action="{% url 'task_add' list.id %}">
+                {% csrf_token %}
+                {{ task_form.as_p }}
+                <button type="submit">タスク追加</button>
+            </form>
+        </div>
+        <hr>
+    {% empty %}
+        <p>まだリストがありません。上のフォームから作成してください。</p>
+    {% endfor %}
+</body>
+</html>
