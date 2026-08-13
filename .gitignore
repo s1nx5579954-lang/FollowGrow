@@ -1,0 +1,15 @@
+# 仮想環境
+venv/
+
+# Python関連
+__pycache__/
+*.pyc
+
+# DB
+db.sqlite3
+
+# 環境
+.env
+
+# OS
+.DS_Store
