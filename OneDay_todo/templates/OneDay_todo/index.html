@@ -9,6 +9,14 @@
     <h1>FlowGrow</h1>
     <p>Share your small steps.</p>
 
+    <p>
+    ようこそ、{{ user.username }} さん
+    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">ログアウト</button>
+    </form>
+    </p>
+
     <h2>新しいリストを作成</h2>
     <form method="post" action="{% url 'list_create' %}">
         {% csrf_token %}
