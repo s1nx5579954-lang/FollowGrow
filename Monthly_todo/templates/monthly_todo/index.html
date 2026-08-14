@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>FollowGrow - Monthly Todo</title>
+</head>
+<body>
+    <h1>FollowGrow</h1>
+    <p>Share your small steps.</p>
+
+    <p>
+        ようこそ、{{ user.username }} さん
+        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">ログアウト</button>
+        </form>
+    </p>
+
+    <p>
+        <a href="{% url 'home' %}">FollowGrowトップ</a> |
+        <a href="{% url 'oneday_index' %}">OneDay Todo</a> |
+        <a href="{% url 'monthly_index' %}">Monthly Todo</a>
+    </p>
+
+    <h2>新しい目標を作成</h2>
+    <form method="post" action="{% url 'monthly_list_create' %}">
+        {% csrf_token %}
+        {{ list_form.as_p }}
+        <button type="submit">目標作成</button>
+    </form>
+
+    <hr>
+
+    {% for list in lists %}
+        <div class="monthly-list">
+            <h2>
+                {{ list.title }}
+                <form method="post" action="{% url 'monthly_list_delete' list.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('この目標とタスクを全て削除しますか？')">削除</button>
+                </form>
+            </h2>
+
+            <p>
+                締め切り：{{ list.deadline }}
+                {% if list.days_remaining < 0 %}
+                    <span style="color: gray;">(締め切り超過)</span>
+                {% elif list.days_remaining <= 3 %}
+                    <span style="color: red; font-weight: bold;">残り{{ list.days_remaining }}日</span>
+                {% elif list.days_remaining <= 7 %}
+                    <span style="color: orange;">残り{{ list.days_remaining }}日</span>
+                {% else %}
+                    <span>残り{{ list.days_remaining }}日</span>
+                {% endif %}
+            </p>
+
+            <ul>
+                {% for task in list.tasks.all %}
+                    <li>
+                        <form method="post" action="{% url 'monthly_task_toggle' task.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="checkbox"
+                                   onchange="this.form.submit()"
+                                   {% if task.is_completed %}checked{% endif %}>
+                        </form>
+
+                        <span style="{% if task.is_completed %}text-decoration: line-through;{% endif %}">
+                            {{ task.content }}
+                        </span>
+
+                        <form method="post" action="{% url 'monthly_task_delete' task.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">削除</button>
+                        </form>
+                    </li>
+                {% empty %}
+                    <li>タスクがありません</li>
+                {% endfor %}
+            </ul>
+
+            <form method="post" action="{% url 'monthly_task_add' list.id %}">
+                {% csrf_token %}
+                {{ task_form.as_p }}
+                <button type="submit">タスク追加</button>
+            </form>
+        </div>
+        <hr>
+    {% empty %}
+        <p>まだ目標がありません。上のフォームから作成してください。</p>
+    {% endfor %}
+</body>
+</html>

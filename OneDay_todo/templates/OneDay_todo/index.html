@@ -3,10 +3,10 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>FlowGrow - OneDay Todo</title>
+    <title>FollowGrow - OneDay Todo</title>
 </head>
 <body>
-    <h1>FlowGrow</h1>
+    <h1>FollowGrow</h1>
     <p>Share your small steps.</p>
 
     <p>
@@ -15,6 +15,12 @@
         {% csrf_token %}
         <button type="submit">ログアウト</button>
     </form>
+    </p>
+
+    <p>
+        <a href="{% url 'home' %}">FollowGrowトップ</a> |
+        <a href="{% url 'oneday_index' %}">OneDay Todo</a> |
+        <a href="{% url 'monthly_index' %}">Monthly Todo</a>
     </p>
 
     <h2>新しいリストを作成</h2>

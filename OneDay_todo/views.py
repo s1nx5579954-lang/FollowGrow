@@ -27,7 +27,7 @@ def list_create(request):
             one_day_list = form.save(commit=False)
             one_day_list.user = request.user
             one_day_list.save()
-    return redirect('index')
+    return redirect('oneday_index')
 
 
 @login_required
@@ -39,7 +39,7 @@ def task_add(request, list_id):
             task = form.save(commit=False)
             task.one_day_list = one_day_list
             task.save()
-    return redirect('index')
+    return redirect('oneday_index')
 
 
 @login_required
@@ -47,7 +47,7 @@ def task_delete(request, task_id):
     task = get_object_or_404(OneDayTask, id=task_id)
     if request.method == 'POST':
         task.delete()
-    return redirect('index')
+    return redirect('oneday_index')
 
 
 def task_toggle(request, task_id):
@@ -55,11 +55,11 @@ def task_toggle(request, task_id):
     if request.method == 'POST':
         task.is_completed = not task.is_completed
         task.save()
-    return redirect('index')
+    return redirect('oneday_index')
 
 @login_required
 def list_delete(request, list_id):
     one_day_list = get_object_or_404(OneDayList, id=list_id, user=request.user)
     if request.method == 'POST':
         one_day_list.delete()
-    return redirect('index')
+    return redirect('oneday_index')

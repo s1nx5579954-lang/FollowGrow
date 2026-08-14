@@ -4,7 +4,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.index, name='oneday_index'),
     path('list/create/', views.list_create, name='list_create'),
     path('list/<int:list_id>/delete/', views.list_delete, name='list_delete'), 
     path('list/<int:list_id>/task/add/', views.task_add, name='task_add'),

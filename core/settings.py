@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'OneDay_todo',
     'accounts',
+    'Monthly_todo',
 ]
 
 MIDDLEWARE = [
@@ -119,8 +120,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # ログイン関連
-LOGIN_REDIRECT_URL = 'index'
+LOGIN_REDIRECT_URL = 'home'
 
-LOGOUT_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'home'
 
 LOGIN_URL = 'login'
