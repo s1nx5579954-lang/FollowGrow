@@ -1,28 +1,8 @@
-<!-- oneday_todo/templates/oneday_todo/index.html -->
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>FollowGrow - OneDay Todo</title>
-</head>
-<body>
-    <h1>FollowGrow</h1>
-    <p>Share your small steps.</p>
+{% extends 'base.html' %}
 
-    <p>
-    ようこそ、{{ user.username }} さん
-    <form method="post" action="{% url 'logout' %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit">ログアウト</button>
-    </form>
-    </p>
+{% block title %}FollowGrow - ホーム{% endblock %}
 
-    <p>
-        <a href="{% url 'home' %}">FollowGrowトップ</a> |
-        <a href="{% url 'oneday_index' %}">OneDay Todo</a> |
-        <a href="{% url 'monthly_index' %}">Monthly Todo</a>
-    </p>
-
+{% block content %}
     <h2>新しいリストを作成</h2>
     <form method="post" action="{% url 'list_create' %}">
         {% csrf_token %}
@@ -76,5 +56,4 @@
     {% empty %}
         <p>まだリストがありません。上のフォームから作成してください。</p>
     {% endfor %}
-</body>
-</html>
+{% endblock %}

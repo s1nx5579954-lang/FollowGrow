@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>タイムライン - FollowGrow</title>
-</head>
-<body>
-    <h1>タイムライン</h1>
+{% extends 'base.html' %}
 
+{% block title %}タイムライン - FollowGrow{% endblock %}
+
+{% block content %}
     <p>
-        <a href="{% url 'home' %}">FollowGrowトップ</a> |
         <a href="{% url 'goalshare_reflection_create' %}">今日の振り返りを書く</a> |
         <a href="{% url 'goalshare_user_search' %}">ユーザーを探す</a>
     </p>
@@ -37,5 +32,4 @@
     {% empty %}
         <p>タイムラインに投稿がありません。フォローしている人が投稿すると、ここに表示されます。</p>
     {% endfor %}
-</body>
-</html>
+{% endblock %}

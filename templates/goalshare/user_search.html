@@ -1,16 +1,9 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>ユーザー検索 - FollowGrow</title>
-</head>
-<body>
-    <h1>ユーザーを探す</h1>
+{% extends 'base.html' %}
 
-    <p>
-        <a href="{% url 'home' %}">FollowGrowトップ</a> |
-        <a href="{% url 'goalshare_timeline' %}">タイムライン</a>
-    </p>
+{% block title %}ユーザーを探す - FollowGrow{% endblock %}
+
+{% block content %}
+    <p><a href="{% url 'goalshare_timeline' %}">タイムラインへ戻る</a></p>
 
     <form method="get">
         <input type="text" name="q" value="{{ query }}" placeholder="ユーザー名で検索">
@@ -36,5 +29,4 @@
             {% endif %}
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}

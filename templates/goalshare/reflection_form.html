@@ -1,17 +1,9 @@
-<!-- GoalShare/templates/goalshare/reflection_form.html -->
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>今日の振り返り - FollowGrow</title>
-</head>
-<body>
-    <h1>今日の振り返り</h1>
+{% extends 'base.html' %}
 
-    <p>
-        <a href="{% url 'home' %}">FollowGrowトップ</a> |
-        <a href="{% url 'goalshare_timeline' %}">タイムライン</a>
-    </p>
+{% block title %}今日の振り返り - FollowGrow{% endblock %}
+
+{% block content %}
+    <p><a href="{% url 'goalshare_timeline' %}">タイムラインへ戻る</a></p>
 
     <h2>今日完了したタスク</h2>
     <ul>
@@ -28,5 +20,4 @@
         {{ form.as_p }}
         <button type="submit">{% if existing %}更新{% else %}投稿{% endif %}</button>
     </form>
-</body>
-</html>
+{% endblock %}
