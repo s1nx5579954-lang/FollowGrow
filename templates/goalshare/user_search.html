@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ユーザー検索 - FollowGrow</title>
+</head>
+<body>
+    <h1>ユーザーを探す</h1>
+
+    <p>
+        <a href="{% url 'home' %}">FollowGrowトップ</a> |
+        <a href="{% url 'goalshare_timeline' %}">タイムライン</a>
+    </p>
+
+    <form method="get">
+        <input type="text" name="q" value="{{ query }}" placeholder="ユーザー名で検索">
+        <button type="submit">検索</button>
+    </form>
+
+    <ul>
+        {% for target_user in users %}
+            <li>
+                {{ target_user.username }}
+                <form method="post" action="{% url 'goalshare_follow_toggle' target_user.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    {% if target_user.id in following_ids %}
+                        <button type="submit">フォロー解除</button>
+                    {% else %}
+                        <button type="submit">フォロー</button>
+                    {% endif %}
+                </form>
+            </li>
+        {% empty %}
+            {% if query %}
+                <li>該当するユーザーが見つかりません</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</body>
+</html>

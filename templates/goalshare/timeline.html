@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>タイムライン - FollowGrow</title>
+</head>
+<body>
+    <h1>タイムライン</h1>
+
+    <p>
+        <a href="{% url 'home' %}">FollowGrowトップ</a> |
+        <a href="{% url 'goalshare_reflection_create' %}">今日の振り返りを書く</a> |
+        <a href="{% url 'goalshare_user_search' %}">ユーザーを探す</a>
+    </p>
+
+    {% for reflection in reflections %}
+        <div class="reflection-card">
+            <p><strong>{{ reflection.user.username }}</strong> - {{ reflection.date }}</p>
+
+            {% if reflection.rating %}
+                <p>{% for i in "12345" %}{% if forloop.counter <= reflection.rating %}★{% else %}☆{% endif %}{% endfor %}</p>
+            {% endif %}
+
+            {% if reflection.completed_tasks_snapshot %}
+                <ul>
+                    {% for task in reflection.completed_tasks_snapshot.splitlines %}
+                        <li>{{ task }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if reflection.comment %}
+                <p>{{ reflection.comment }}</p>
+            {% endif %}
+        </div>
+        <hr>
+    {% empty %}
+        <p>タイムラインに投稿がありません。フォローしている人が投稿すると、ここに表示されます。</p>
+    {% endfor %}
+</body>
+</html>

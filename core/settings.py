@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'OneDay_todo',
     'accounts',
     'Monthly_todo',
+    'GoalShare',
 ]
 
 MIDDLEWARE = [

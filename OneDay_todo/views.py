@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import OneDayList, OneDayTask
 from .forms import OneDayListForm, OneDayTaskForm
+from django.utils import timezone
+
 
 
 @login_required
@@ -50,10 +52,15 @@ def task_delete(request, task_id):
     return redirect('oneday_index')
 
 
+@login_required
 def task_toggle(request, task_id):
-    task = get_object_or_404(OneDayTask, id=task_id)
+    task = get_object_or_404(OneDayTask, id=task_id, one_day_list__user=request.user)
     if request.method == 'POST':
         task.is_completed = not task.is_completed
+        if task.is_completed:
+            task.completed_at = timezone.now()
+        else:
+            task.completed_at = None
         task.save()
     return redirect('oneday_index')
 
