@@ -1,31 +1,100 @@
+<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}FollowGrow{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #615d51 0%, #111126 100%);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        .top-nav {
+            background-color: #ffffff;
+            padding: 0.6rem 2rem;
+            text-align: right;
+        }
+
+        .top-nav a {
+            color: #999999;
+            text-decoration: none;
+            margin-left: 1.2rem;
+            font-size: 0.95rem;
+        }
+
+        .top-nav a:hover {
+            color: #333333;
+        }
+
+        .user-bar {
+            background-color: #8c8c8c;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            object-fit: cover;
+        }
+
+        .username {
+            font-size: 1.2rem;
+            flex-grow: 1;
+        }
+
+        .logout-btn {
+            background-color: #b0b0b0;
+            color: #ffffff;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background-color: #c4c4c4;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1><a href="{% url 'home' %}">FollowGrow</a></h1>
-        <p>Share your small steps.</p>
+    {% if user.is_authenticated %}
+        <nav class="top-nav">
+            <a href="{% url 'home' %}">ホーム画面</a>
+            <a href="{% url 'oneday_index' %}">OneDay</a>
+            <a href="{% url 'monthly_index' %}">Monthly</a>
+            <a href="{% url 'goalshare_timeline' %}">GoalShare</a>
+        </nav>
 
-        {% if user.is_authenticated %}
-            <p>
-                ようこそ、{{ user.username }} さん
-                <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">ログアウト</button>
-                </form>
-            </p>
-            <nav>
-                <a href="{% url 'oneday_index' %}">OneDay Todo</a>
-                <a href="{% url 'monthly_index' %}">Monthly Todo</a>
-                <a href="{% url 'goalshare_timeline' %}">GoalShare</a>
-            </nav>
-        {% endif %}
-    </header>
-
-    <hr>
+        <div class="user-bar">
+            {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" class="avatar" alt="avatar">
+            {% else %}
+                <div class="avatar"></div>
+            {% endif %}
+            <span class="username">{{ user.username }}</span>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">log out</button>
+            </form>
+        </div>
+    {% endif %}
 
     <main>
         {% block content %}

@@ -1,59 +1,184 @@
 {% extends 'base.html' %}
 
-{% block title %}FollowGrow - ホーム{% endblock %}
+{% block title %}OneDay Todo - FollowGrow{% endblock %}
 
 {% block content %}
-    <h2>新しいリストを作成</h2>
-    <form method="post" action="{% url 'list_create' %}">
+<style>
+    .oneday-heading {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 900;
+        color: #ffffff;
+        margin: 1rem 0 2.5rem 0;
+    }
+
+    .oneday-heading .word {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 0.8s ease-out forwards;
+    }
+
+    .create-list-section {
+        margin-bottom: 2rem;
+    }
+
+    .pill-label {
+        display: inline-block;
+        background-color: #a9a9a9;
+        color: #ffffff;
+        padding: 0.5rem 1.2rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+
+    .create-list-form {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: #ffffff;
+        font-size: 1.1rem;
+    }
+
+    .create-list-form input[type="text"] {
+        flex-grow: 1;
+        max-width: 300px;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        border: none;
+    }
+
+    .pill-btn {
+        background-color: #a9a9a9;
+        color: #ffffff;
+        border: none;
+        padding: 0.5rem 1.3rem;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+
+    .pill-btn:hover {
+        background-color: #c4c4c4;
+    }
+
+    .oneday-list {
+        border-top: 1px solid rgba(255,255,255,0.4);
+        padding: 1.5rem 0;
+    }
+
+    .list-title-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        background-color: #8c8c8c;
+        color: #ffffff;
+        padding: 0.5rem 1.2rem;
+        border-radius: 999px;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .list-title-badge form button {
+        background: none;
+        border: none;
+        color: #ffffff;
+        opacity: 0.7;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+
+    .task-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: #ffffff;
+        margin-bottom: 0.6rem;
+        font-size: 1.05rem;
+    }
+
+    .task-row .task-delete-btn {
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.5);
+        cursor: pointer;
+        font-size: 0.85rem;
+        margin-left: auto;
+    }
+
+    .task-add-form {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+
+    .task-add-form input[type="text"] {
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        border: none;
+        min-width: 220px;
+    }
+
+    @keyframes fadeUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+</style>
+
+<div class="oneday-heading">
+    <h1 class="word">One Day</h1>
+</div>
+
+<div class="create-list-section">
+    <span class="pill-label">新しいリストを作成</span>
+    <form method="post" action="{% url 'oneday_list_create' %}" class="create-list-form">
         {% csrf_token %}
-        {{ list_form.as_p }}
-        <button type="submit">リスト作成</button>
+        Title：{{ list_form.title }}
+        <button type="submit" class="pill-btn">作成</button>
     </form>
+</div>
 
-    <hr>
-
-    {% for list in lists %}
-        <div class="oneday-list">
-            <h2>
-                {{ list.title }}
-                <form method="post" action="{% url 'list_delete' list.id %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" onclick="return confirm('このリストとタスクを全て削除しますか？')">リスト削除</button>
-                </form>
-            </h2>
-
-            <ul>
-                {% for task in list.tasks.all %}
-                    <li>
-                        <form method="post" action="{% url 'task_toggle' task.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <input type="checkbox"
-                                   onchange="this.form.submit()"
-                                   {% if task.is_completed %}checked{% endif %}>
-                        </form>
-
-                        <span style="{% if task.is_completed %}text-decoration: line-through;{% endif %}">
-                            {{ task.content }}
-                        </span>
-
-                        <form method="post" action="{% url 'task_delete' task.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit">削除</button>
-                        </form>
-                    </li>
-                {% empty %}
-                    <li>タスクがありません</li>
-                {% endfor %}
-            </ul>
-
-            <form method="post" action="{% url 'task_add' list.id %}">
+{% for list in lists %}
+    <div class="oneday-list">
+        <div class="list-title-badge">
+            {{ list.title }}
+            <form method="post" action="{% url 'oneday_list_delete' list.id %}">
                 {% csrf_token %}
-                {{ task_form.as_p }}
-                <button type="submit">タスク追加</button>
+                <button type="submit" onclick="return confirm('このリストとタスクを全て削除しますか？')">消去</button>
             </form>
         </div>
-        <hr>
-    {% empty %}
-        <p>まだリストがありません。上のフォームから作成してください。</p>
-    {% endfor %}
+
+        {% for task in list.tasks.all %}
+            <div class="task-row">
+                <form method="post" action="{% url 'oneday_task_toggle' task.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="checkbox"
+                           onchange="this.form.submit()"
+                           {% if task.is_completed %}checked{% endif %}>
+                </form>
+                <span style="{% if task.is_completed %}text-decoration: line-through; opacity: 0.6;{% endif %}">
+                    {{ task.content }}
+                </span>
+                <form method="post" action="{% url 'oneday_task_delete' task.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="task-delete-btn">削除</button>
+                </form>
+            </div>
+        {% empty %}
+            <p style="color: rgba(255,255,255,0.6);">タスクがありません</p>
+        {% endfor %}
+
+        <form method="post" action="{% url 'oneday_task_add' list.id %}" class="task-add-form">
+            {% csrf_token %}
+            {{ task_form.content }}
+            <button type="submit" class="pill-btn" style="margin-left: 0.5rem;">追加</button>
+        </form>
+    </div>
+{% empty %}
+    <p style="color: rgba(255,255,255,0.7);">まだリストがありません。上のフォームから作成してください。</p>
+{% endfor %}
 {% endblock %}

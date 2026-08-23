@@ -1,7 +1,78 @@
 {% extends 'base.html' %}
 
-{% block title %}FollowGrow - ホーム{% endblock %}
+{% block title %}FollowGrow{% endblock %}
 
 {% block content %}
-    <p>FollowGrowへようこそ。上のメニューから使いたい機能を選んでください。</p>
+<style>
+    .hero {
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 4.5rem;
+        font-weight: 900;
+        color: #ffffff;
+        margin: 0 0 2rem 0;
+    }
+
+    .hero-title .word {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 0.8s ease-out forwards;
+    }
+
+    .hero-title .word-1 { animation-delay: 0.2s; }
+    .hero-title .word-2 { animation-delay: 0.5s; margin-left: 0.4em; }
+
+    .hero-nav {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .hero-btn {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 0.8s ease-out forwards;
+        background-color: #a9a9a9;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 0.9rem 2rem;
+        border-radius: 999px;
+        font-size: 1.1rem;
+        transition: background-color 0.2s;
+    }
+
+    .hero-btn:hover {
+        background-color: #c4c4c4;
+    }
+
+    .hero-btn.btn-1 { animation-delay: 0.9s; }
+    .hero-btn.btn-2 { animation-delay: 1.1s; }
+    .hero-btn.btn-3 { animation-delay: 1.3s; }
+
+    @keyframes fadeUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="hero">
+    <h1 class="hero-title">
+        <span class="word word-1">Follow</span><span class="word word-2">Grow</span>
+    </h1>
+
+    <div class="hero-nav">
+        <a href="{% url 'oneday_index' %}" class="hero-btn btn-1">OneDay</a>
+        <a href="{% url 'monthly_index' %}" class="hero-btn btn-2">Monthly</a>
+        <a href="{% url 'goalshare_timeline' %}" class="hero-btn btn-3">GoalShare</a>
+    </div>
+</div>
 {% endblock %}
