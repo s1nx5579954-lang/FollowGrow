@@ -125,7 +125,7 @@ LOGIN_REDIRECT_URL = 'home'
 
 LOGOUT_REDIRECT_URL = 'home'
 
-LOGIN_URL = 'login'
+LOGIN_URL = 'entrance'
 
 #メディア
 MEDIA_URL = '/media/'

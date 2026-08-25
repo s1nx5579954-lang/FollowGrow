@@ -13,3 +13,6 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'accounts/signup.html', {'form': form})
+
+def entrance(request):
+    return render(request, 'accounts/entrance.html')

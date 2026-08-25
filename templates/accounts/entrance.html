@@ -1,0 +1,51 @@
+{% extends 'base_auth.html' %}
+
+{% block title %}FollowGrow{% endblock %}
+
+{% block page %}
+<style>
+    .entrance-screen {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .entrance-title {
+        font-size: 4.5rem;
+        font-weight: 900;
+        color: #ffffff;
+        margin: 0 0 2.5rem 0;
+    }
+
+    .entrance-nav {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .entrance-btn {
+        background-color: #a9a9a9;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 0.9rem 2.5rem;
+        border-radius: 999px;
+        font-size: 1.2rem;
+        transition: background-color 0.2s;
+    }
+
+    .entrance-btn:hover {
+        background-color: #c4c4c4;
+    }
+</style>
+
+<div class="entrance-screen">
+    <h1 class="entrance-title">Follow Grow</h1>
+
+    <div class="entrance-nav">
+        <a href="{% url 'signup' %}" class="entrance-btn">Sign up</a>
+        <a href="{% url 'login' %}" class="entrance-btn">Log in</a>
+    </div>
+</div>
+{% endblock %}
