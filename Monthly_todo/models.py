@@ -19,14 +19,3 @@ class MonthlyList(models.Model):
         return delta.days
 
 
-class MonthlyTask(models.Model):
-    monthly_list = models.ForeignKey(
-        MonthlyList,
-        on_delete=models.CASCADE,
-        related_name='tasks'
-    )
-    content = models.CharField(max_length=200)
-    is_completed = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.content

@@ -1,72 +1,129 @@
 {% extends 'base.html' %}
 
-{% block title %}FollowGrow - ホーム{% endblock %}
+{% block title %}Monthly Todo - FollowGrow{% endblock %}
 
 {% block content %}
-    <h2>新しい目標を作成</h2>
-    <form method="post" action="{% url 'monthly_list_create' %}">
+<style>
+    .monthly-heading {
+        text-align: center;
+        font-size: 3rem;
+        font-weight: 900;
+        color: #ffffff;
+        margin: 1rem 0 2.5rem 0;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .create-list-section {
+        margin-bottom: 2rem;
+    }
+
+    .pill-label {
+        display: inline-block;
+        background-color: #a9a9a9;
+        color: #ffffff;
+        padding: 0.5rem 1.2rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+
+    .create-list-form {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: #ffffff;
+        font-size: 1.1rem;
+        flex-wrap: wrap;
+    }
+
+    .create-list-form input[type="text"],
+    .create-list-form input[type="datetime-local"] {
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        border: none;
+    }
+
+    .pill-btn {
+        background-color: #a9a9a9;
+        color: #ffffff;
+        border: none;
+        padding: 0.5rem 1.3rem;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+
+    .pill-btn:hover {
+        background-color: #c4c4c4;
+    }
+
+    .monthly-goals {
+        border-top: 1px solid rgba(255,255,255,0.4);
+        padding-top: 1.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem 3rem;
+    }
+
+    .goal-row {
+        color: #ffffff;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .goal-row .delete-btn {
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.5);
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+</style>
+
+<h1 class="monthly-heading">Monthly</h1>
+
+<div class="create-list-section">
+    <span class="pill-label">新しい目標を作成</span>
+    <form method="post" action="{% url 'monthly_list_create' %}" class="create-list-form">
         {% csrf_token %}
-        {{ list_form.as_p }}
-        <button type="submit">目標作成</button>
+        Title：{{ list_form.title }}
+        締め切り：{{ list_form.deadline }}
+        <button type="submit" class="pill-btn">作成</button>
     </form>
+</div>
 
-    <hr>
-
+<div class="monthly-goals">
     {% for list in lists %}
-        <div class="monthly-list">
-            <h2>
-                {{ list.title }}
-                <form method="post" action="{% url 'monthly_list_delete' list.id %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" onclick="return confirm('この目標とタスクを全て削除しますか？')">削除</button>
-                </form>
-            </h2>
-
-            <p>
-                締め切り：{{ list.deadline }}
-                {% if list.days_remaining < 0 %}
-                    <span style="color: gray;">(締め切り超過)</span>
-                {% elif list.days_remaining <= 3 %}
-                    <span style="color: red; font-weight: bold;">残り{{ list.days_remaining }}日</span>
-                {% elif list.days_remaining <= 7 %}
-                    <span style="color: orange;">残り{{ list.days_remaining }}日</span>
-                {% else %}
-                    <span>残り{{ list.days_remaining }}日</span>
-                {% endif %}
-            </p>
-
-            <ul>
-                {% for task in list.tasks.all %}
-                    <li>
-                        <form method="post" action="{% url 'monthly_task_toggle' task.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <input type="checkbox"
-                                   onchange="this.form.submit()"
-                                   {% if task.is_completed %}checked{% endif %}>
-                        </form>
-
-                        <span style="{% if task.is_completed %}text-decoration: line-through;{% endif %}">
-                            {{ task.content }}
-                        </span>
-
-                        <form method="post" action="{% url 'monthly_task_delete' task.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit">削除</button>
-                        </form>
-                    </li>
-                {% empty %}
-                    <li>タスクがありません</li>
-                {% endfor %}
-            </ul>
-
-            <form method="post" action="{% url 'monthly_task_add' list.id %}">
+        <div class="goal-row">
+            <input type="checkbox" disabled>
+            {{ list.title }}　{{ list.deadline|date:"Y/m/d" }}
+            {% if list.days_remaining < 0 %}
+                <span style="color: #cccccc;">(締め切り超過)</span>
+            {% elif list.days_remaining <= 3 %}
+                <span style="color: #ff8080; font-weight: bold;">残り{{ list.days_remaining }}日</span>
+            {% elif list.days_remaining <= 7 %}
+                <span style="color: #ffcc80;">残り{{ list.days_remaining }}日</span>
+            {% else %}
+                <span>残り{{ list.days_remaining }}日</span>
+            {% endif %}
+            <form method="post" action="{% url 'monthly_list_delete' list.id %}" style="display:inline;">
                 {% csrf_token %}
-                {{ task_form.as_p }}
-                <button type="submit">タスク追加</button>
+                <button type="submit" class="delete-btn" onclick="return confirm('この目標を削除しますか？')">削除</button>
             </form>
         </div>
-        <hr>
     {% empty %}
-        <p>まだ目標がありません。上のフォームから作成してください。</p>
+        <p style="color: rgba(255,255,255,0.7);">まだ目標がありません。上のフォームから作成してください。</p>
     {% endfor %}
+</div>
 {% endblock %}
