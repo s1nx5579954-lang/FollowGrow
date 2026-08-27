@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ target_user.username }} - FollowGrow{% endblock %}
+
+{% block content %}
+<style>
+    .profile-top {
+        display: flex;
+        gap: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.4);
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .profile-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .profile-avatar-lg {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        object-fit: cover;
+    }
+
+    .profile-username {
+        color: #ffffff;
+        font-size: 1.3rem;
+    }
+
+    .profile-counts {
+        color: rgba(255,255,255,0.7);
+        font-size: 0.9rem;
+    }
+
+    .profile-follow-btn {
+        margin-top: 0.5rem;
+        background-color: #a9a9a9;
+        color: #ffffff;
+        border: none;
+        padding: 0.4rem 1.2rem;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+
+    .profile-right {
+        flex-grow: 1;
+        color: #ffffff;
+        min-width: 250px;
+    }
+
+    .profile-bio-label {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-bio-text {
+        color: rgba(255,255,255,0.9);
+        line-height: 1.6;
+    }
+
+    .posts-heading {
+        color: #ffffff;
+        font-size: 1.6rem;
+        font-weight: 900;
+        margin-bottom: 1rem;
+    }
+
+    .profile-reflection-card {
+        border-top: 1px solid rgba(255,255,255,0.4);
+        padding: 1.2rem 0;
+        color: #ffffff;
+    }
+
+    .profile-reflection-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-reflection-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        object-fit: cover;
+    }
+
+    .profile-reflection-stars {
+        font-size: 1.2rem;
+        letter-spacing: 0.2rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .profile-reflection-tasks {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .profile-reflection-tasks li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .profile-reflection-tasks li::before {
+        content: "";
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 1px solid #ffffff;
+        border-radius: 3px;
+    }
+</style>
+
+<div class="profile-top">
+    <div class="profile-left">
+        {% if target_user.profile.avatar %}
+            <img src="{{ target_user.profile.avatar.url }}" class="profile-avatar-lg" alt="avatar">
+        {% else %}
+            <div class="profile-avatar-lg"></div>
+        {% endif %}
+        <span class="profile-username">{{ target_user.username }}</span>
+        <span class="profile-counts">フォロー {{ following_count }}　フォロワー {{ followers_count }}</span>
+
+        {% if not is_own_profile %}
+            <form method="post" action="{% url 'goalshare_follow_toggle' target_user.id %}">
+                {% csrf_token %}
+                {% if is_following %}
+                    <button type="submit" class="profile-follow-btn">フォロー解除</button>
+                {% else %}
+                    <button type="submit" class="profile-follow-btn">フォロー</button>
+                {% endif %}
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="profile-right">
+        <div class="profile-bio-label">自己紹介</div>
+        <p class="profile-bio-text">
+            {% if target_user.profile.bio %}
+                {{ target_user.profile.bio }}
+            {% else %}
+                自己紹介はまだありません
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<h2 class="posts-heading">投稿一覧</h2>
+
+{% for reflection in reflections %}
+    <div class="profile-reflection-card">
+        <div class="profile-reflection-header">
+            {% if reflection.user.profile.avatar %}
+                <img src="{{ reflection.user.profile.avatar.url }}" class="profile-reflection-avatar" alt="avatar">
+            {% else %}
+                <div class="profile-reflection-avatar"></div>
+            {% endif %}
+            <span>{{ reflection.user.username }}</span>
+            <span style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">{{ reflection.date|date:"M. j, Y" }}</span>
+        </div>
+
+        {% if reflection.rating %}
+            <div class="profile-reflection-stars">
+                {% for i in "12345" %}{% if forloop.counter <= reflection.rating %}★{% else %}☆{% endif %}{% endfor %}
+            </div>
+        {% endif %}
+
+        {% if reflection.completed_tasks_snapshot %}
+            <ul class="profile-reflection-tasks">
+                {% for task in reflection.completed_tasks_snapshot.splitlines %}
+                    <li>{{ task }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if reflection.comment %}
+            <p style="margin-top: 0.5rem;">{{ reflection.comment }}</p>
+        {% endif %}
+    </div>
+{% empty %}
+    <p style="color: rgba(255,255,255,0.7);">まだ投稿がありません</p>
+{% endfor %}
+{% endblock %}

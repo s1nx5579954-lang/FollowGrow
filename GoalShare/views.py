@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils import timezone
-from .models import DailyReflection, Follow
+from .models import DailyReflection, Follow, Like
 from .forms import DailyReflectionForm
 from OneDay_todo.models import OneDayTask
 
@@ -47,10 +47,13 @@ def timeline(request):
     following_ids = request.user.following.values_list('following_id', flat=True)
     reflections = DailyReflection.objects.filter(
         user_id__in=list(following_ids) + [request.user.id]
-    ).select_related('user')
+    ).select_related('user').prefetch_related('likes')
+
+    liked_ids = set(request.user.likes.values_list('reflection_id', flat=True))
 
     context = {
         'reflections': reflections,
+        'liked_ids': liked_ids,
     }
     return render(request, 'goalshare/timeline.html', context)
 
@@ -84,4 +87,13 @@ def follow_toggle(request, user_id):
             follow.delete()
     return redirect(request.META.get('HTTP_REFERER', 'goalshare_timeline'))
 
+
+@login_required
+def like_toggle(request, reflection_id):
+    reflection = get_object_or_404(DailyReflection, id=reflection_id)
+    if request.method == 'POST':
+        like, created = Like.objects.get_or_create(user=request.user, reflection=reflection)
+        if not created:
+            like.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'goalshare_timeline'))
     

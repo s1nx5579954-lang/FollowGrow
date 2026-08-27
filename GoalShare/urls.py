@@ -6,4 +6,5 @@ urlpatterns = [
     path('goalshare/reflection/create/', views.reflection_create, name='goalshare_reflection_create'),
     path('goalshare/search/', views.user_search, name='goalshare_user_search'),
     path('goalshare/follow/<int:user_id>/', views.follow_toggle, name='goalshare_follow_toggle'),
+    path('goalshare/like/<int:reflection_id>/', views.like_toggle, name='goalshare_like_toggle'),
 ]

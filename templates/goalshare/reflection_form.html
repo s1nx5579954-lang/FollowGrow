@@ -3,21 +3,71 @@
 {% block title %}今日の振り返り - FollowGrow{% endblock %}
 
 {% block content %}
-    <p><a href="{% url 'goalshare_timeline' %}">タイムラインへ戻る</a></p>
+<style>
+    .reflection-form-heading {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+    }
 
-    <h2>今日完了したタスク</h2>
-    <ul>
-        {% for task in completed_tasks %}
-            <li>{{ task.content }}</li>
-        {% empty %}
-            <li>今日完了したタスクはまだありません</li>
-        {% endfor %}
-    </ul>
+    .task-preview {
+        list-style: none;
+        padding: 0;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+    }
 
-    <h2>{% if existing %}振り返りを編集{% else %}振り返りを投稿{% endif %}</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">{% if existing %}更新{% else %}投稿{% endif %}</button>
-    </form>
+    .task-preview li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .task-preview li::before {
+        content: "";
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 1px solid #ffffff;
+        border-radius: 3px;
+    }
+
+    .reflection-form {
+        color: #ffffff;
+        max-width: 400px;
+    }
+
+    .reflection-form select,
+    .reflection-form textarea {
+        width: 100%;
+        padding: 0.6rem 1rem;
+        border-radius: 12px;
+        border: none;
+        margin-top: 0.3rem;
+        margin-bottom: 1rem;
+        box-sizing: border-box;
+    }
+</style>
+
+<h1 class="reflection-form-heading">今日の振り返り</h1>
+
+<h2>今日完了したタスク</h2>
+<ul class="task-preview">
+    {% for task in completed_tasks %}
+        <li>{{ task.content }}</li>
+    {% empty %}
+        <li style="opacity: 0.6;">今日完了したタスクはまだありません</li>
+    {% endfor %}
+</ul>
+
+<h2>{% if existing %}振り返りを編集{% else %}振り返りを投稿{% endif %}</h2>
+<form method="post" class="reflection-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="pill-btn" style="background-color: #a9a9a9; color: #ffffff; border: none; padding: 0.6rem 1.5rem; border-radius: 999px; cursor: pointer;">
+        {% if existing %}更新{% else %}投稿{% endif %}
+    </button>
+</form>
 {% endblock %}

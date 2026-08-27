@@ -3,33 +3,188 @@
 {% block title %}タイムライン - FollowGrow{% endblock %}
 
 {% block content %}
-    <p>
-        <a href="{% url 'goalshare_reflection_create' %}">今日の振り返りを書く</a> |
-        <a href="{% url 'goalshare_user_search' %}">ユーザーを探す</a>
-    </p>
+<style>
+    .goalshare-heading {
+        text-align: center;
+        font-size: 3rem;
+        font-weight: 900;
+        color: #ffffff;
+        margin: 1rem 0 1.5rem 0;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 0.8s ease-out forwards;
+    }
 
-    {% for reflection in reflections %}
-        <div class="reflection-card">
-            <p><strong>{{ reflection.user.username }}</strong> - {{ reflection.date }}</p>
+    @keyframes fadeUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-            {% if reflection.rating %}
-                <p>{% for i in "12345" %}{% if forloop.counter <= reflection.rating %}★{% else %}☆{% endif %}{% endfor %}</p>
-            {% endif %}
+    .goalshare-nav {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
 
-            {% if reflection.completed_tasks_snapshot %}
-                <ul>
-                    {% for task in reflection.completed_tasks_snapshot.splitlines %}
-                        <li>{{ task }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+    .pill-btn-link {
+        display: inline-block;
+        background-color: #a9a9a9;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        transition: background-color 0.2s;
+    }
 
-            {% if reflection.comment %}
-                <p>{{ reflection.comment }}</p>
-            {% endif %}
+    .pill-btn-link:hover {
+        background-color: #c4c4c4;
+    }
+
+    .reflection-card {
+        border-top: 1px solid rgba(255,255,255,0.4);
+        padding: 1.5rem 0;
+        color: #ffffff;
+    }
+
+    .reflection-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .reflection-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        object-fit: cover;
+    }
+
+    .reflection-username {
+        font-size: 1.05rem;
+        font-weight: bold;
+    }
+
+    .reflection-date {
+        color: rgba(255,255,255,0.6);
+        font-size: 0.9rem;
+    }
+
+    .reflection-stars {
+        font-size: 1.3rem;
+        letter-spacing: 0.2rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .reflection-tasks {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 0.8rem 0;
+    }
+
+    .reflection-tasks li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .reflection-tasks li::before {
+        content: "";
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 1px solid #ffffff;
+        border-radius: 3px;
+    }
+
+    .reflection-comment {
+        margin-bottom: 0.8rem;
+        color: rgba(255,255,255,0.9);
+    }
+
+    .reflection-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .like-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.4rem;
+        color: #ffffff;
+    }
+
+    .like-btn.liked {
+        color: #ff6b6b;
+    }
+
+    .like-count {
+        color: #ffffff;
+        font-size: 1rem;
+    }
+</style>
+
+<h1 class="goalshare-heading">GoalShare</h1>
+
+<div class="goalshare-nav">
+    <a href="{% url 'goalshare_reflection_create' %}" class="pill-btn-link">今日振り返る</a>
+    <a href="{% url 'goalshare_user_search' %}" class="pill-btn-link">ユーザーを探す</a>
+</div>
+
+{% for reflection in reflections %}
+    <div class="reflection-card">
+        <div class="reflection-header">
+            <a href="{% url 'profile_view' reflection.user.username %}">
+                {% if reflection.user.profile.avatar %}
+                    <img src="{{ reflection.user.profile.avatar.url }}" class="reflection-avatar" alt="avatar">
+                {% else %}
+                    <div class="reflection-avatar"></div>
+                {% endif %}
+            </a>
+            <a href="{% url 'profile_view' reflection.user.username %}" style="color: #ffffff; text-decoration: none;">
+                <span class="reflection-username">{{ reflection.user.username }}</span>
+            </a>
+            <span class="reflection-date">{{ reflection.date|date:"M. j, Y" }}</span>
         </div>
-        <hr>
-    {% empty %}
-        <p>タイムラインに投稿がありません。フォローしている人が投稿すると、ここに表示されます。</p>
-    {% endfor %}
+
+        {% if reflection.rating %}
+            <div class="reflection-stars">
+                {% for i in "12345" %}{% if forloop.counter <= reflection.rating %}★{% else %}☆{% endif %}{% endfor %}
+            </div>
+        {% endif %}
+
+        {% if reflection.completed_tasks_snapshot %}
+            <ul class="reflection-tasks">
+                {% for task in reflection.completed_tasks_snapshot.splitlines %}
+                    <li>{{ task }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if reflection.comment %}
+            <p class="reflection-comment">{{ reflection.comment }}</p>
+        {% endif %}
+
+        <div class="reflection-footer">
+            <form method="post" action="{% url 'goalshare_like_toggle' reflection.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="like-btn {% if reflection.id in liked_ids %}liked{% endif %}">
+                    {% if reflection.id in liked_ids %}♥{% else %}♡{% endif %}
+                </button>
+            </form>
+            <span class="like-count">{{ reflection.likes.count }}</span>
+        </div>
+    </div>
+{% empty %}
+    <p style="color: rgba(255,255,255,0.7); text-align: center;">タイムラインに投稿がありません。フォローしている人が投稿すると、ここに表示されます。</p>
+{% endfor %}
 {% endblock %}

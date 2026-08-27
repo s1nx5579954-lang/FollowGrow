@@ -83,11 +83,13 @@
         </nav>
 
         <div class="user-bar">
-            {% if user.profile.avatar %}
-                <img src="{{ user.profile.avatar.url }}" class="avatar" alt="avatar">
-            {% else %}
-                <div class="avatar"></div>
-            {% endif %}
+            <a href="{% url 'profile_edit' %}">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" class="avatar" alt="avatar">
+                {% else %}
+                    <div class="avatar"></div>
+                {% endif %}
+            </a>
             <span class="username">{{ user.username }}</span>
             <form method="post" action="{% url 'logout' %}">
                 {% csrf_token %}

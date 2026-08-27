@@ -3,30 +3,71 @@
 {% block title %}ユーザーを探す - FollowGrow{% endblock %}
 
 {% block content %}
-    <p><a href="{% url 'goalshare_timeline' %}">タイムラインへ戻る</a></p>
+<style>
+    .search-heading {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+    }
 
-    <form method="get">
-        <input type="text" name="q" value="{{ query }}" placeholder="ユーザー名で検索">
-        <button type="submit">検索</button>
-    </form>
+    .search-form {
+        display: flex;
+        gap: 0.6rem;
+        margin-bottom: 2rem;
+    }
 
-    <ul>
-        {% for target_user in users %}
-            <li>
-                {{ target_user.username }}
-                <form method="post" action="{% url 'goalshare_follow_toggle' target_user.id %}" style="display:inline;">
-                    {% csrf_token %}
-                    {% if target_user.id in following_ids %}
-                        <button type="submit">フォロー解除</button>
-                    {% else %}
-                        <button type="submit">フォロー</button>
-                    {% endif %}
-                </form>
-            </li>
-        {% empty %}
-            {% if query %}
-                <li>該当するユーザーが見つかりません</li>
+    .search-form input[type="text"] {
+        flex-grow: 1;
+        max-width: 300px;
+        padding: 0.6rem 1rem;
+        border-radius: 999px;
+        border: none;
+    }
+
+    .user-result {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: #ffffff;
+        padding: 0.8rem 0;
+        border-top: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .user-result-name {
+        flex-grow: 1;
+    }
+</style>
+
+<h1 class="search-heading">ユーザーを探す</h1>
+
+<form method="get" class="search-form">
+    <input type="text" name="q" value="{{ query }}" placeholder="ユーザー名で検索">
+    <button type="submit" class="pill-btn" style="background-color: #a9a9a9; color: #ffffff; border: none; padding: 0.6rem 1.5rem; border-radius: 999px; cursor: pointer;">検索</button>
+</form>
+
+{% for target_user in users %}
+    <div class="user-result">
+        <a href="{% url 'profile_view' target_user.username %}">
+            {% if target_user.profile.avatar %}
+                <img src="{{ target_user.profile.avatar.url }}" class="reflection-avatar" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background-color:#fff;" alt="avatar">
+            {% else %}
+                <div style="width:40px;height:40px;border-radius:50%;background-color:#fff;"></div>
             {% endif %}
-        {% endfor %}
-    </ul>
+        </a>
+        <span class="user-result-name">{{ target_user.username }}</span>
+        <form method="post" action="{% url 'goalshare_follow_toggle' target_user.id %}">
+            {% csrf_token %}
+            {% if target_user.id in following_ids %}
+                <button type="submit" class="pill-btn" style="background-color: #666; color: #ffffff; border: none; padding: 0.5rem 1.2rem; border-radius: 999px; cursor: pointer;">フォロー解除</button>
+            {% else %}
+                <button type="submit" class="pill-btn" style="background-color: #a9a9a9; color: #ffffff; border: none; padding: 0.5rem 1.2rem; border-radius: 999px; cursor: pointer;">フォロー</button>
+            {% endif %}
+        </form>
+    </div>
+{% empty %}
+    {% if query %}
+        <p style="color: rgba(255,255,255,0.7);">該当するユーザーが見つかりません</p>
+    {% endif %}
+{% endfor %}
 {% endblock %}
