@@ -104,6 +104,32 @@
     .save-btn:hover {
         background-color: #c4c4c4;
     }
+
+    .tag-checkboxes {
+    color: #ffffff;
+}
+
+.tag-checkboxes ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+.tag-checkboxes li {
+    background-color: rgba(255,255,255,0.15);
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+}
+
+.tag-checkboxes label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+}
+
 </style>
 
 <h1 class="edit-heading">Profile Edit</h1>
@@ -126,6 +152,11 @@
 
     <div class="bio-label">自己紹介</div>
     {{ form.bio }}
+
+    <div class="bio-label" style="margin-top: 1.5rem;">タグ(複数選択可)</div>
+    <div class="tag-checkboxes">
+        {{ form.tags }}
+    </div>
 
     <div class="save-row">
         <button type="submit" class="save-btn">保存</button>

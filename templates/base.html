@@ -83,11 +83,11 @@
         </nav>
 
         <div class="user-bar">
-            <a href="{% url 'profile_edit' %}">
+           <a href="{% url 'profile_view' user.username %}">
                 {% if user.profile.avatar %}
                     <img src="{{ user.profile.avatar.url }}" class="avatar" alt="avatar">
                 {% else %}
-                    <div class="avatar"></div>
+                     <div class="avatar"></div>
                 {% endif %}
             </a>
             <span class="username">{{ user.username }}</span>
