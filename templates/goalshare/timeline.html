@@ -131,6 +131,10 @@
         color: #ffffff;
         font-size: 1rem;
     }
+
+    .hidden {
+    display: none;
+    }
 </style>
 
 <h1 class="goalshare-heading">GoalShare</h1>
@@ -138,7 +142,20 @@
 <div class="goalshare-nav">
     <a href="{% url 'goalshare_reflection_create' %}" class="pill-btn-link">今日振り返る</a>
     <a href="{% url 'goalshare_user_search' %}" class="pill-btn-link">ユーザーを探す</a>
+    <a href="?mode=following" class="pill-btn-link">フォロー中のみ</a>
+    <button type="button" onclick="document.getElementById('filter-panel').classList.toggle('hidden')" class="pill-btn-link" style="border:none; cursor:pointer;">⚙</button>
 </div>
+
+<form method="get" id="filter-panel" class="hidden" style="margin-bottom: 1.5rem;">
+    {% for tag in request.user.profile.tags.all %}
+        <label style="margin-right: 1rem; color: #ffffff;">
+            <input type="checkbox" name="tags" value="{{ tag.name }}" 
+                {% if tag.id|stringformat:"s" in selected_tag_ids %}checked{% endif %}>
+            {{ tag.name }}
+        </label>
+    {% endfor %}
+    <button type="submit" class="pill-btn-link" style="border:none; cursor:pointer;">絞り込む</button>
+</form>
 
 {% for reflection in reflections %}
     <div class="reflection-card">
@@ -154,6 +171,11 @@
                 <span class="reflection-username">{{ reflection.user.username }}</span>
             </a>
             <span class="reflection-date">{{ reflection.date|date:"M. j, Y" }}</span>
+            
+            {% for tag in reflection.user.profile.tags.all %}
+            <span>{{ tag.name }}</span>
+            {% endfor %}
+            
         </div>
 
         {% if reflection.rating %}

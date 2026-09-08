@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils import timezone
-from .models import DailyReflection, Follow, Like
+from .models import DailyReflection, Follow, Like, Tag
 from .forms import DailyReflectionForm
 from OneDay_todo.models import OneDayTask
 
@@ -44,27 +44,35 @@ def reflection_create(request):
 
 @login_required
 def timeline(request):
-    following_ids = request.user.following.values_list('following_id', flat=True)
+    filter_mode = request.GET.get('mode', 'all')
+    selected_tag_ids = request.GET.getlist('tags')
 
-    my_tags = request.user.profile.tags.all()
-    tag_matched_ids = User.objects.filter(
-        profile__tags__in=my_tags
-    ).exclude(id=request.user.id).values_list('id', flat=True)
-
-    target_ids = set(list(following_ids) + list(tag_matched_ids) + [request.user.id])
-
+    if filter_mode == 'following':
+        following_ids = request.user.following.values_list('following_id', flat=True)
+        target_ids = list(following_ids) + [request.user.id]
+    
+    elif selected_tag_ids:
+        selected_tags = Tag.objects.filter(id__in=selected_tag_ids)
+        target_ids = list(User.objects.filter(
+            profile__tags__in=selected_tags
+        ).values_list('id', flat=True)) + [request.user.id]
+    else:
+        target_ids = User.objects.values_list('id', flat=True)
+    
     reflections = DailyReflection.objects.filter(
         user_id__in=target_ids
-    ).select_related('user').prefetch_related('likes').distinct()
+    ).select_related('user', 'user__profile').prefetch_related('likes', 'user__profile__tags').distinct()
 
     liked_ids = set(request.user.likes.values_list('reflection_id', flat=True))
 
     context = {
         'reflections': reflections,
         'liked_ids': liked_ids,
+        'filter_mode': filter_mode,
+        'selected_tag_ids': selected_tag_ids,
     }
     return render(request, 'goalshare/timeline.html', context)
-    
+
 @login_required
 def user_search(request):
     query = request.GET.get('q', '')
