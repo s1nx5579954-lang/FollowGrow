@@ -149,7 +149,7 @@
 <form method="get" id="filter-panel" class="hidden" style="margin-bottom: 1.5rem;">
     {% for tag in request.user.profile.tags.all %}
         <label style="margin-right: 1rem; color: #ffffff;">
-            <input type="checkbox" name="tags" value="{{ tag.name }}" 
+            <input type="checkbox" name="tags" value="{{ tag.id }}" 
                 {% if tag.id|stringformat:"s" in selected_tag_ids %}checked{% endif %}>
             {{ tag.name }}
         </label>

@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils import timezone
-from .models import DailyReflection, Follow, Like, Tag
+from .models import DailyReflection, Follow, Like
+from accounts.models import Profile, Tag
 from .forms import DailyReflectionForm
 from OneDay_todo.models import OneDayTask
 
