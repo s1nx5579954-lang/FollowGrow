@@ -138,6 +138,14 @@ Django標準の`ManyToManyField`だけでも多対多関係は表現できます
 - 共通ヘッダー(`base.html`)を導入し、ユーザーアイコン・ユーザー名・ログアウト・各アプリへのナビゲーションを全ページで共通化
 - タグはピル型のバッジ表示にすることで、視覚的に把握しやすくした
 
+###　実際の画面
+
+![ホーム画面](media/pictures/ホーム画面.mp4)
+![OneDay](media/pictures/oneday.png)
+![Monthly](media/pictures/monthly.png)
+![Timeline](media/pictures/timeline.png)
+![Profile](media/pictures/profile.png)
+
 ## セキュリティ
 
 - **CSRF対策**：全てのPOSTフォームに`{% csrf_token %}`を設置し、CSRF攻撃を防止
