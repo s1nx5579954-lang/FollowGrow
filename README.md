@@ -140,11 +140,11 @@ Django標準の`ManyToManyField`だけでも多対多関係は表現できます
 
 ###　実際の画面
 
-![ホーム画面](media/pictures/ホーム画面.mp4)
-![OneDay](media/pictures/oneday.png)
-![Monthly](media/pictures/monthly.png)
-![Timeline](media/pictures/timeline.png)
-![Profile](media/pictures/profile.png)
+![ホーム画面](pictures/ホーム画面.mp4)
+![OneDay](pictures/oneday.png)
+![Monthly](pictures/monthly.png)
+![Timeline](pictures/timeline.png)
+![Profile](pictures/profile.png)
 
 ## セキュリティ
 
