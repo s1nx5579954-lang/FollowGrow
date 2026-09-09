@@ -17,7 +17,9 @@ class Follow(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('follower', 'following')
+        constraints = [
+            models.UniqueConstraint(fields=['follower', 'following'], name='unique_follow')
+        ]
 
     def __str__(self):
         return f"{self.follower} → {self.following}"
@@ -32,7 +34,9 @@ class DailyReflection(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'date')
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'date'], name='unique_daily_reflection')
+        ]
         ordering = ['-date']
 
     def __str__(self):
@@ -44,4 +48,6 @@ class Like(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'reflection')
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'reflection'], name='unique_like')
+        ]
