@@ -30,7 +30,7 @@ class DailyReflection(models.Model):
     date = models.DateField(default=timezone.localdate)
     rating = models.PositiveSmallIntegerField(null=True, blank=True)
     comment = models.TextField(blank=True)
-    completed_tasks_snapshot = models.TextField(blank=True)
+    selected_tasks = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

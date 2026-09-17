@@ -56,7 +56,12 @@
 <h2>今日完了したタスク</h2>
 <ul class="task-preview">
     {% for task in completed_tasks %}
-        <li>{{ task.content }}</li>
+        <li>    
+            <label>
+                <input type="checkbox" name="selected_task_ids" value="{{task.id}}">
+                {{task.content}}
+            </label>
+        </li>    
     {% empty %}
         <li style="opacity: 0.6;">今日完了したタスクはまだありません</li>
     {% endfor %}

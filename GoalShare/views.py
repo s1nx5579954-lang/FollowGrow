@@ -19,9 +19,11 @@ def reflection_create(request):
         is_completed=True,
         completed_at__date=today
     )
-    task_names = '\n'.join(task.content for task in completed_tasks)
 
     if request.method == 'POST':
+        selected_task_ids = request.POST.getlist('selected_task_ids')
+        selected_tasks = completed_tasks.filter(id__in=selected_task_ids)
+        selected_task_names = "\n".join(task.content for task in selected_tasks)
         if existing:
             form = DailyReflectionForm(request.POST, instance=existing)
         else:
@@ -30,7 +32,7 @@ def reflection_create(request):
             reflection = form.save(commit=False)
             reflection.user = request.user
             reflection.date = today
-            reflection.completed_tasks_snapshot = task_names
+            reflection.selected_tasks = selected_task_names
             reflection.save()
             return redirect('goalshare_timeline')
     else:
