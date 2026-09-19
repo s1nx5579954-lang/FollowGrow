@@ -106,8 +106,14 @@
 <div class="monthly-goals">
     {% for list in lists %}
         <div class="goal-row">
-            <input type="checkbox" disabled>
-            {{ list.title }}　{{ list.deadline|date:"Y/m/d" }}
+            <form method="post" action="{% url 'monthly_list_toggle' list.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="checkbox" onchange="this.form.submit()" {% if list.is_completed %}checked{% endif %}>
+            </form>
+            <span style="{% if list.is_completed %}text-decoration: line-through; opacity: 0.6;{% endif %}">
+                {{ list.title }}　{{ list.deadline|date:"Y/m/d" }}
+            </span>
+            
             {% if list.days_remaining < 0 %}
                 <span style="color: #cccccc;">(締め切り超過)</span>
             {% elif list.days_remaining <= 3 %}

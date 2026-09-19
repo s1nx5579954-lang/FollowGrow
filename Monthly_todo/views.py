@@ -34,3 +34,15 @@ def list_delete(request, list_id):
     return redirect('monthly_index')
 
 
+@login_required
+def list_toggle(request, list_id):
+    monthly_list = get_object_or_404(MonthlyList, id=list_id, user=request.user)
+    if request.method == 'POST':
+        monthly_list.is_completed = not monthly_list.is_completed
+        monthly_list.save()
+
+    return redirect('monthly_index')
+
+
+        
+    
