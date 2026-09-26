@@ -184,9 +184,9 @@
             </div>
         {% endif %}
 
-        {% if reflection.completed_tasks_snapshot %}
+        {% if reflection.selected_tasks %}
             <ul class="reflection-tasks">
-                {% for task in reflection.completed_tasks_snapshot.splitlines %}
+                {% for task in reflection.selected_tasks.splitlines %}
                     <li>{{ task }}</li>
                 {% endfor %}
             </ul>
