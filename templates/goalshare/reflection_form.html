@@ -53,8 +53,11 @@
 
 <h1 class="reflection-form-heading">今日の振り返り</h1>
 
-<h2>今日完了したタスク</h2>
-<ul class="task-preview">
+<form method="post" class="reflection-form">
+    {% csrf_token %}
+
+    <h2>今日完了したタスク</h2>
+    <ul class="task-preview">
     {% for task in completed_tasks %}
         <li>    
             <label>
@@ -65,10 +68,9 @@
     {% empty %}
         <li style="opacity: 0.6;">今日完了したタスクはまだありません</li>
     {% endfor %}
-</ul>
+    </ul>
 
-<h2>{% if existing %}振り返りを編集{% else %}振り返りを投稿{% endif %}</h2>
-<form method="post" class="reflection-form">
+    <form method="post" class="reflection-form">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="pill-btn" style="background-color: #a9a9a9; color: #ffffff; border: none; padding: 0.6rem 1.5rem; border-radius: 999px; cursor: pointer;">
