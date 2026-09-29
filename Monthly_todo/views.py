@@ -2,11 +2,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import MonthlyList
 from .forms import MonthlyListForm
+from django.utils import timezone
+import datetime
+
 
 
 @login_required
 def index(request):
     lists = MonthlyList.objects.filter(user=request.user)
+    list_form = MonthlyListForm()
+    for l in lists:
+        l.deadline_utc = l.deadline.astimezone(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
     list_form = MonthlyListForm()
     context = {
         'lists': lists,
