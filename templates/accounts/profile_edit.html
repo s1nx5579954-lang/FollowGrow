@@ -162,4 +162,20 @@
         <button type="submit" class="save-btn">保存</button>
     </div>
 </form>
+<div style="margin-top: 2rem; color: #ffffff;">
+    <h3>LINE通知を設定する</h3>
+    <ol style="line-height: 1.8;">
+        <li>下のQRコード、またはリンクから、FollowGrowの公式LINEアカウントを友だち追加してください</li>
+        <li>友だち追加後、トーク画面に、以下の連携コードを、そのまま送信してください</li>
+    </ol>
+    <p style="font-size: 1.5rem; font-weight: bold; letter-spacing: 0.2rem;">
+        {{ line_link_code }}
+    </p>
+    <a href="https://line.me/R/ti/p/@957cewcj" target="_blank" class="pill-btn" style="text-decoration: none;">
+        LINEを友だち追加する
+    </a>
+    {% if request.user.profile.line_user_id %}
+        <p style="color: #80ff80;">✓ LINE連携済みです</p>
+    {% endif %}
+</div>
 {% endblock %}
