@@ -43,6 +43,15 @@ def list_toggle(request, list_id):
 
     return redirect('monthly_index')
 
+@login_required
+def bulk_delete_completed(request):
+    if request.method == 'POST':
+        MonthlyList.objects.filter(
+            user=request.user,
+            is_completed=True
+        ).delete()
+    return redirect('monthly_index')
+
 
         
     

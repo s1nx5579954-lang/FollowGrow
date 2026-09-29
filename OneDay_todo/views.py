@@ -70,3 +70,13 @@ def list_delete(request, list_id):
     if request.method == 'POST':
         one_day_list.delete()
     return redirect('oneday_index')
+
+
+@login_required
+def bulk_delete_completed(request):
+    if request.method == 'POST':
+        OneDayTask.objects.filter(
+            one_day_list__user=request.user,
+            is_completed=True
+        ).delete()
+    return redirect('oneday_index')
