@@ -5,6 +5,14 @@ from django.contrib.auth.decorators import login_required
 from .forms import ProfileForm
 from GoalShare.models import Follow, DailyReflection
 from django.contrib.auth.models import User
+import json
+import hashlib
+import hmac
+import base64
+from django.conf import settings
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Profile
 
 def signup(request):
     if request.method == 'POST':
@@ -30,7 +38,16 @@ def profile_edit(request):
             return redirect('profile_view', username=request.user.username)
     else:
         form = ProfileForm(instance=profile)
-    return render(request, 'accounts/profile_edit.html', {'form': form})
+    
+    if not profile.line_link_code:
+        profile.generate_line_link_code()
+    
+    context = {
+        'form': form,
+        'line_link_code': profile.line_link_code,
+    }
+
+    return render(request, 'accounts/profile_edit.html', context)
 
 @login_required
 def profile_view(request, username):
@@ -48,3 +65,22 @@ def profile_view(request, username):
         'is_own_profile': target_user == request.user,
     }
     return render(request, 'accounts/profile_view.html', context)
+
+@csrf_exempt
+def line_webhook(request):
+    if request.method == 'POST':
+        body = request.body.decode('utf-8')
+        events = json.loads(body).get('events', [])
+
+        for event in events:
+            if event.get('type') == 'message' and event['message'].get('type') == 'text':
+                received_text = event['message']['text'].strip().upper()
+                line_user_id = event['source']['userId']
+
+                profile = Profile.objects.filter(line_link_code=received_text).first()
+                if profile:
+                    profile.line_user_id = line_user_id
+                    profile.save()
+
+        return HttpResponse(status=200)
+    return HttpResponse(status=405)
