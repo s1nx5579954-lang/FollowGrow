@@ -10,4 +10,5 @@ urlpatterns = [
     path('list/<int:list_id>/task/add/', views.task_add, name='oneday_task_add'),
     path('task/<int:task_id>/delete/', views.task_delete, name='oneday_task_delete'),
     path('task/<int:task_id>/toggle/', views.task_toggle, name='oneday_task_toggle'),
+    path('tasks/bulk-delete-completed/', views.bulk_delete_completed, name='oneday_bulk_delete_completed'),
 ]

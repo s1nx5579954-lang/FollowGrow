@@ -6,4 +6,5 @@ urlpatterns = [
     path('monthly/list/create/', views.list_create, name='monthly_list_create'),
     path('monthly/list/<int:list_id>/delete/', views.list_delete, name='monthly_list_delete'),
     path('monthly/list/<int:list_id>/toggle/', views.list_toggle, name='monthly_list_toggle'),
+    path('monthly/list/bulk-delete-completed/', views.bulk_delete_completed, name='monthly_bulk_delete_completed'),
 ]

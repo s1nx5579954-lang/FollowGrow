@@ -140,6 +140,14 @@
         Title：{{ list_form.title }}
         <button type="submit" class="pill-btn">作成</button>
     </form>
+
+    <form method="post" action="{% url 'oneday_bulk_delete_completed' %}" style="margin-top: 1.5rem;">
+        {% csrf_token %}
+        <button type="submit" class="pill-btn" style="font-size: 0.8rem; padding: 0.4rem 1rem;" onclick="return confirm('完了済みのタスクをすべて削除しますか？')">
+            完了済みを一括削除
+        </button>
+    </form>
+
 </div>
 
 {% for list in lists %}
@@ -154,6 +162,7 @@
 
         {% for task in list.tasks.all %}
             <div class="task-row">
+                
                 <form method="post" action="{% url 'oneday_task_toggle' task.id %}" style="display:inline;">
                     {% csrf_token %}
                     <input type="checkbox"
