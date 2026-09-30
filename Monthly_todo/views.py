@@ -53,8 +53,6 @@ def list_toggle(request, list_id):
     return redirect('monthly_index')
 
 @csrf_exempt
-from django.utils import timezone
-
 def check_deadlines(request):
     today = timezone.localdate()
     three_days_later = today + timezone.timedelta(days=3)
