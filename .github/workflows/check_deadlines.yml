@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger deadline check
-        run: curl -X POST https://followgrow.onrender.com/monthly/check-deadlines/
+        run: curl -X POST https://followgrow.onrender.com/monthly/monthly/check-deadlines/
