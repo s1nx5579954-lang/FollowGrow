@@ -62,13 +62,18 @@ def check_deadlines(request):
         is_completed=False
     ).select_related('user__profile')
 
+    print(f"対象件数: {upcoming_lists.count()}件、今日: {today}、1日後: {one_day_later}、3日後: {three_days_later}")
+
     for l in upcoming_lists:
         deadline_local_date = timezone.localtime(l.deadline).date()
+        print(f"チェック中: {l.title}, 締切日: {deadline_local_date}")
+
         if deadline_local_date not in [three_days_later, one_day_later]:
             continue
 
         line_user_id = l.user.profile.line_user_id
         if not line_user_id:
+            print(f"{l.title}: line_user_idが未設定です")
             continue
 
         days_left = (deadline_local_date - today).days
