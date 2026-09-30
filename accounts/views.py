@@ -27,7 +27,8 @@ def send_line_message(line_user_id, message):
         'messages': [{'type': 'text', 'text': message}],
     }
     requests.post(url, headers=headers, json=data)
-    
+    print(f"LINE送信結果: {response.status_code}, {response.text}")
+
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
