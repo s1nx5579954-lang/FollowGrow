@@ -2,19 +2,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from .forms import ProfileForm
-from GoalShare.models import Follow, DailyReflection
 from django.contrib.auth.models import User
-import json
-import hashlib
-import hmac
-import base64
-from django.conf import settings
-from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Profile
-import requests
+from django.http import HttpResponse
 from django.conf import settings
+import json
+import requests
+from .forms import ProfileForm
+from .models import Profile
+from GoalShare.models import Follow, DailyReflection
+
 
 def send_line_message(line_user_id, message):
     url = 'https://api.line.me/v2/bot/message/push'
@@ -26,8 +23,8 @@ def send_line_message(line_user_id, message):
         'to': line_user_id,
         'messages': [{'type': 'text', 'text': message}],
     }
-    response = requests.post(url, headers=headers, json=data)
-    print(f"LINE送信結果: {response.status_code}, {response.text}")
+    requests.post(url, headers=headers, json=data)
+
 
 def signup(request):
     if request.method == 'POST':
@@ -40,8 +37,10 @@ def signup(request):
         form = UserCreationForm()
     return render(request, 'accounts/signup.html', {'form': form})
 
+
 def entrance(request):
     return render(request, 'accounts/entrance.html')
+
 
 @login_required
 def profile_edit(request):
@@ -53,22 +52,21 @@ def profile_edit(request):
             return redirect('profile_view', username=request.user.username)
     else:
         form = ProfileForm(instance=profile)
-    
+
     if not profile.line_link_code:
         profile.generate_line_link_code()
-    
+
     context = {
         'form': form,
         'line_link_code': profile.line_link_code,
     }
-
     return render(request, 'accounts/profile_edit.html', context)
+
 
 @login_required
 def profile_view(request, username):
     target_user = get_object_or_404(User, username=username)
     reflections = DailyReflection.objects.filter(user=target_user)
-
     is_following = Follow.objects.filter(follower=request.user, following=target_user).exists()
 
     context = {
@@ -81,6 +79,7 @@ def profile_view(request, username):
     }
     return render(request, 'accounts/profile_view.html', context)
 
+
 @csrf_exempt
 def line_webhook(request):
     if request.method == 'POST':
@@ -92,10 +91,4 @@ def line_webhook(request):
                 received_text = event['message']['text'].strip().upper()
                 line_user_id = event['source']['userId']
 
-                profile = Profile.objects.filter(line_link_code=received_text).first()
-                if profile:
-                    profile.line_user_id = line_user_id
-                    profile.save()
-
-        return HttpResponse(status=200)
-    return HttpResponse(status=405)
+                profile =
