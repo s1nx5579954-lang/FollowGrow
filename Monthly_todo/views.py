@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.utils import timezone
 from accounts.views import send_line_message
+from django.views.decorators.csrf import csrf_exempt
 
 
 @login_required
@@ -51,6 +52,7 @@ def list_toggle(request, list_id):
 
     return redirect('monthly_index')
 
+@csrf_exempt
 def check_deadlines(request):
     today = timezone.localdate()
     three_days_later = today + timezone.timedelta(days=3)
