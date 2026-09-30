@@ -91,4 +91,10 @@ def line_webhook(request):
                 received_text = event['message']['text'].strip().upper()
                 line_user_id = event['source']['userId']
 
-                profile =
+                profile = Profile.objects.filter(line_link_code=received_text).first()
+                if profile:
+                    profile.line_user_id = line_user_id
+                    profile.save()
+
+        return HttpResponse(status=200)
+    return HttpResponse(status=405)
