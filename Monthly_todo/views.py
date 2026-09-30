@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import MonthlyList
@@ -8,10 +9,12 @@ from django.utils import timezone
 from accounts.views import send_line_message
 
 
-
 @login_required
 def index(request):
     lists = MonthlyList.objects.filter(user=request.user)
+    list_form = MonthlyListForm()
+    for l in lists:
+        l.deadline_utc = l.deadline.astimezone(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
     list_form = MonthlyListForm()
     context = {
         'lists': lists,
@@ -48,7 +51,6 @@ def list_toggle(request, list_id):
 
     return redirect('monthly_index')
 
-@login_required
 def check_deadlines(request):
     today = timezone.localdate()
     three_days_later = today + timezone.timedelta(days=3)
@@ -69,6 +71,16 @@ def check_deadlines(request):
         send_line_message(line_user_id, message)
 
     return HttpResponse('OK')
+
+@login_required
+def bulk_delete_completed(request):
+    if request.method == 'POST':
+        MonthlyList.objects.filter(
+            user=request.user,
+            is_completed=True
+        ).delete()
+    return redirect('monthly_index')
+
 
         
     
