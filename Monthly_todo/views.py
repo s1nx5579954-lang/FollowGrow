@@ -53,22 +53,27 @@ def list_toggle(request, list_id):
     return redirect('monthly_index')
 
 @csrf_exempt
+from django.utils import timezone
+
 def check_deadlines(request):
     today = timezone.localdate()
     three_days_later = today + timezone.timedelta(days=3)
     one_day_later = today + timezone.timedelta(days=1)
 
     upcoming_lists = MonthlyList.objects.filter(
-        Q(deadline__date=three_days_later) | Q(deadline__date=one_day_later),
         is_completed=False
     ).select_related('user__profile')
 
     for l in upcoming_lists:
+        deadline_local_date = timezone.localtime(l.deadline).date()
+        if deadline_local_date not in [three_days_later, one_day_later]:
+            continue
+
         line_user_id = l.user.profile.line_user_id
         if not line_user_id:
             continue
 
-        days_left = (l.deadline.date() - today).days
+        days_left = (deadline_local_date - today).days
         message = f"「{l.title}」の締め切りまで、あと{days_left}日です！"
         send_line_message(line_user_id, message)
 
