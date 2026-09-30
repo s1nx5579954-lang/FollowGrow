@@ -1,0 +1,12 @@
+name: Check Monthly Deadlines
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger deadline check
+        run: curl -X POST https://followgrow.onrender.com/monthly/check-deadlines/

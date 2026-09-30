@@ -13,7 +13,21 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Profile
+import requests
+from django.conf import settings
 
+def send_line_message(line_user_id, message):
+    url = 'https://api.line.me/v2/bot/message/push'
+    headers = {
+        'Authorization': f'Bearer {settings.LINE_CHANNEL_ACCESS_TOKEN}',
+        'Content-Type': 'application/json',
+    }
+    data = {
+        'to': line_user_id,
+        'messages': [{'type': 'text', 'text': message}],
+    }
+    requests.post(url, headers=headers, json=data)
+    
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
